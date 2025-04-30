@@ -1,5 +1,7 @@
 package com.masanz.gda;
 
+import com.sun.source.util.Trees;
+
 import javax.print.Doc;
 import java.util.*;
 
@@ -112,6 +114,9 @@ public class Gestor {
      * @return
      */
     public HashSet<Asignatura> getAsignaturas(Grupo grupo) {
+//        for (Asignatura grupo1 : registro.get(grupo).keySet()) {
+//            System.out.println(grupo1.toString());
+//        }
         return new HashSet<>(registro.get(grupo).keySet());
     }
 
@@ -537,11 +542,20 @@ public class Gestor {
      * @return
      */
     public TreeMap<Asignatura, Docente> getAsignaturasDocentesGrupo(Grupo grupo) {
-        //TODO: 76. Docentes que imparten una asignatura
+        //TODO: 76. Docentes que imparten una asignatura DONE
         TreeMap<Asignatura, Docente> listaAsignaturasDocentes = new TreeMap<>();
-        HashSet<Asignatura> listaAsignaturasGrupo = getAsignaturas(grupo);
+        HashSet<Asignatura> listaAsignaturasGrupo = new HashSet<>();
+
+        for (Map.Entry<Docente, TreeSet<GrupoAsignatura>> entry : mapaDocentes.entrySet()) {
+            for (GrupoAsignatura asignatura : entry.getValue()) {
+                if (asignatura.getGrupo().equals(grupo)) {
+                    listaAsignaturasGrupo.add(asignatura.getAsignatura());
+                }
+            }
+        }
 
         for (Asignatura asignatura : listaAsignaturasGrupo) {
+//            System.out.println(asignatura.getNombre());
             for (Map.Entry<Docente, TreeSet<GrupoAsignatura>> entry : mapaDocentes.entrySet()) {
                 for (GrupoAsignatura grupoAsignatura : entry.getValue()) {
                     if (grupoAsignatura.getAsignatura().equals(asignatura) && grupoAsignatura.getGrupo().equals(grupo)) {
@@ -550,6 +564,7 @@ public class Gestor {
                 }
             }
         }
+
         return listaAsignaturasDocentes;
     }
 
@@ -560,8 +575,28 @@ public class Gestor {
      * @return
      */
     public TreeSet<Grupo> getGruposComunes(Docente docente1, Docente docente2) {
-        //TODO: 77. Grupos comunes en los que imparten dos docentes
-        return null;
+        //TODO: 77. Grupos comunes en los que imparten dos docentes DONE
+        TreeSet<Grupo> listaGruposComunes = new TreeSet<>();
+
+        TreeSet<Grupo> listaGrupos = new TreeSet<>();
+
+        for (Map.Entry<Docente, TreeSet<GrupoAsignatura>> entry : mapaDocentes.entrySet()) {
+            if (entry.getKey().equals(docente1) || entry.getKey().equals(docente2)) {
+                for (GrupoAsignatura grupoAsignatura : entry.getValue()) {
+                    listaGrupos.add(grupoAsignatura.getGrupo());
+                }
+            }
+        }
+
+        for (Grupo grupo : listaGrupos) {
+            if (grupo != null) {
+                if (getDocentesGrupo(grupo).contains(docente1) && getDocentesGrupo(grupo).contains(docente2)) {
+                    listaGruposComunes.add(grupo);
+                }
+            }
+        }
+
+        return listaGruposComunes;
     }
 
     /**

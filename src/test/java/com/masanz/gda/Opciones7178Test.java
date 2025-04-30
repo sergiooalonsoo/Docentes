@@ -83,7 +83,7 @@ public class Opciones7178Test {
     @Order(76)
     void getAsignaturasDocentesGrupo() {
         var res = gestor.getAsignaturasDocentesGrupo(new Grupo("DAW1"));
-//        assertEquals(7, res.size());
+        assertEquals(7, res.size());
         assertEquals("Laura", res.get(new Asignatura("BADA")).getNombre());
         assertEquals("Ion", res.get(new Asignatura("ING1")).getNombre());
         assertEquals("Miren", res.get(new Asignatura("PROG")).getNombre());
